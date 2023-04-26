@@ -18,13 +18,22 @@ public class EmployeeService {
 
     private final Map <String, Employee> employees = new HashMap<>();
 
+    private final ValidatorService validatorService;
+
+    public EmployeeService(ValidatorService validatorService) {
+        this.validatorService = validatorService;
+    }
+
     private String getKey(String firstName, String lastName) {
         return firstName + "|" + lastName;
     }
 
     public Employee add(String firstName, String lastName, int department, int salary) {
         if (employees.size() < SIZE) {
-            Employee employee = new Employee(firstName, lastName, department, salary);
+            Employee employee = new Employee(validatorService.validateName(firstName),
+                    validatorService.validateSurname(lastName),
+                    department,
+                    salary);
             if (employees.containsKey(employee.getFullName() )) {
                 throw new EmployeeAlreadyAddedExeption();
             }
